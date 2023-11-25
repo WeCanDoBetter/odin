@@ -53,6 +53,6 @@
     "typescript": "^5.3.2"
   },
   "dependencies": {
-    "@wecandobetter/btree": "^1.0.0"
+    "@wecandobetter/btree": "^1.0.1-alpha.0"
   }
 }

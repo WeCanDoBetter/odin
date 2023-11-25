@@ -9,6 +9,30 @@ export interface Thing {
 }
 
 /**
+ * An Entity is a Thing that represents a node in the graph.
+ */
+export interface Entity extends Thing {
+  /** The type of the Entity. */
+  entityType: EntityType;
+  /** The properties of the Entity. */
+  properties: PropertyMap;
+}
+
+/**
+ * A Relationship is a Thing that represents an edge in the graph.
+ */
+export interface Relationship extends Thing {
+  /** The type of the Relationship. */
+  relationshipType: RelationshipType;
+  /** The properties of the Relationship. */
+  properties: PropertyMap;
+  /** The source Entity of the Relationship. */
+  source: EntityReference;
+  /** The target Entity of the Relationship. */
+  target: EntityReference;
+}
+
+/**
  * Represents a reference to an Entity. The reference is the Entity's id.
  */
 export type EntityReference = string;
@@ -38,25 +62,6 @@ export type PropertyType = string | number | boolean;
 export type PropertyMap = Record<string, PropertyType>;
 
 /**
- * An Entity is a Thing that represents a node in the graph.
+ * A Thing without an id.
  */
-export interface Entity extends Thing {
-  /** The type of the Entity. */
-  entityType: EntityType;
-  /** The properties of the Entity. */
-  properties: PropertyMap;
-}
-
-/**
- * A Relationship is a Thing that represents an edge in the graph.
- */
-export interface Relationship extends Thing {
-  /** The type of the Relationship. */
-  relationshipType: RelationshipType;
-  /** The properties of the Relationship. */
-  properties: PropertyMap;
-  /** The source Entity of the Relationship. */
-  source: EntityReference;
-  /** The target Entity of the Relationship. */
-  target: EntityReference;
-}
+export type WithoutId<T extends Thing> = Omit<T, "id">;
