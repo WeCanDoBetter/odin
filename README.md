@@ -19,8 +19,9 @@ Odin is an in-memory, browser-first
   designed to be a persistent database.
 - **Odin Query Language:** Odin has **its own query language**, called the
   [Odin Query Language (OQL)](https://github.com/WeCanDoBetter/oql). OQL is a
-  declarative query language that is similar to SQL. It is designed to be easy
-  to learn and use.
+  declarative query language that is similar to Cypher, from
+  [Neo4j](https://neo4j.com/) fame. OQL is designed to be easy to learn and use,
+  while still being powerful enough to express complex queries.
 
 ## 📜 License
 
