@@ -32,8 +32,10 @@ export const compareProperty = <T extends PropertyType>(
     return compareNumber(a, b);
   } else if (isBoolean(a) && isBoolean(b)) {
     return compareBoolean(a, b);
-  } else {
+  } else if (typeof a !== typeof b) {
     throw new Error(`Cannot compare ${typeof a} and ${typeof b}`);
+  } else {
+    throw new Error(`Cannot compare ${a} and ${b}`);
   }
 };
 
