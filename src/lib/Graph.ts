@@ -4,6 +4,7 @@ import {
   EntityType,
   PropertyType,
   type Relationship,
+  type SerializedGraph,
   type WithoutId,
 } from "../types";
 import {
@@ -49,25 +50,26 @@ export class Graph {
       );
     }
 
+    let tree: BTree<any, PropertyType>;
+
     if (thingType === "entity") {
-      this.#indexes.entities.byProperty.set(
-        property,
-        new BTree<Entity, PropertyType>(
-          2,
-          compareProperty,
-          createPropertySelector(property),
-        ),
+      tree = new BTree<Entity, PropertyType>(
+        2,
+        compareProperty,
+        createPropertySelector(property),
+      );
+    } else if (thingType === "relationship") {
+      tree = new BTree<Relationship, PropertyType>(
+        2,
+        compareProperty,
+        createPropertySelector(property),
       );
     } else {
-      this.#indexes.relationships.byProperty.set(
-        property,
-        new BTree<Relationship, PropertyType>(
-          2,
-          compareProperty,
-          createPropertySelector(property),
-        ),
-      );
+      throw new Error(`Invalid thingType ${thingType}`);
     }
+
+    // Set the index
+    this.#indexes.entities.byProperty.set(property, tree);
   }
 
   /**
@@ -122,6 +124,66 @@ export class Graph {
       if (property in fullRelationship.properties) {
         tree.insert(fullRelationship);
       }
+    }
+  }
+
+  /**
+   * Get an Entity by id.
+   * @param id The id of the Entity to get.
+   * @throws If an Entity with the given id does not exist.
+   */
+  getEntity(id: string) {
+    const set = this.#indexes.entities.byId.search(id);
+
+    if (!set.size) {
+      throw new Error(`Entity with id ${id} does not exist`);
+    }
+
+    return set.values().next().value;
+  }
+
+  /**
+   * Get a Relationship by id.
+   * @param id The id of the Relationship to get.
+   * @throws If a Relationship with the given id does not exist.
+   */
+  getRelationship(id: string) {
+    const set = this.#indexes.relationships.byId.search(id);
+
+    if (!set.size) {
+      throw new Error(`Relationship with id ${id} does not exist`);
+    }
+
+    return set.values().next().value;
+  }
+
+  /**
+   * Export the graph to a serialized form.
+   * @returns The serialized form of the graph.
+   * @see SerializedGraph
+   */
+  export(): SerializedGraph {
+    const entities = [...this.#indexes.entities.byId];
+    const relationships = [...this.#indexes.relationships.byId];
+
+    return {
+      entities,
+      relationships,
+    };
+  }
+
+  /**
+   * Import a serialized graph.
+   * @param serializedGraph The serialized graph to import.
+   * @see SerializedGraph
+   */
+  import(serializedGraph: SerializedGraph) {
+    for (const entity of serializedGraph.entities) {
+      this.addEntity(entity);
+    }
+
+    for (const relationship of serializedGraph.relationships) {
+      this.addRelationship(relationship);
     }
   }
 }

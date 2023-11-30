@@ -1,3 +1,4 @@
+import type { SerializedGraph } from "../types";
 import { Graph } from "./Graph";
 
 /**
@@ -20,6 +21,18 @@ export class Odin {
 
     graph = new Graph();
     this.#graphs.set(name, graph);
+    return graph;
+  }
+
+  /**
+   * Create a graph from a serialized graph. The serialized graph can be
+   * created by calling the `export` method on a graph.
+   * @param name The name of the graph.
+   * @param serialized The serialized graph.
+   */
+  createGraphFromSerialized(name: string, serialized: SerializedGraph) {
+    const graph = this.createGraph(name);
+    graph.import(serialized);
     return graph;
   }
 

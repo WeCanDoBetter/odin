@@ -65,3 +65,14 @@ export type PropertyMap = Record<string, PropertyType>;
  * A Thing without an id.
  */
 export type WithoutId<T extends Thing> = Omit<T, "id">;
+
+/**
+ * The serialized form of a graph. The serialized graph can be stored and imported
+ * at a later time.
+ */
+export interface SerializedGraph {
+  /** The entities in the graph. */
+  entities: Entity[];
+  /** The relationships in the graph. */
+  relationships: Relationship[];
+}
