@@ -1,4 +1,4 @@
-import { BTree } from "@wecandobetter/btree";
+import { BTree, Operators } from "@wecandobetter/btree";
 import {
   type Entity,
   EntityType,
@@ -155,6 +155,41 @@ export class Graph {
     }
 
     return set.values().next().value;
+  }
+
+  /**
+   * Search the graph for Entities and Relationships that match the given
+   * criteria. The criteria is a key, operator, and value. The key is the name
+   * of the property to search. The operator is the comparison operator to use.
+   * The value is the value to compare against.
+   * @param key The name of the property to search.
+   * @param operator The comparison operator to use.
+   * @param value The value to compare against.
+   * @param collector The collector to use for collecting results.
+   * @returns A set of Entities and Relationships that match the search criteria.
+   */
+  search(
+    key: string,
+    operator: Operators,
+    value: PropertyType,
+    collector: Set<Entity | Relationship> = new Set(),
+  ) {
+    const entities = this.#indexes.entities.byProperty.get(key);
+    const relationships = this.#indexes.relationships.byProperty.get(key);
+
+    if (!entities && !relationships) {
+      throw new Error(`No index for property ${key}`);
+    }
+
+    if (entities) {
+      entities.search(value, operator, collector as Set<Entity>);
+    }
+
+    if (relationships) {
+      relationships.search(value, operator, collector as Set<Relationship>);
+    }
+
+    return collector;
   }
 
   /**
